@@ -2,6 +2,8 @@ import pygad
 
 from knapsack_solvers.algorithms.genetic_algorithm import GeneticAlgorithm
 from knapsack_solvers.algorithms.memetic_algorithm import MemeticAlgorithm
+from knapsack_solvers.algorithms.evolution_strategy import EvolutionStrategy
+from knapsack_solvers.algorithms.differential_evolution import DifferentialEvolution
 
 # Knapsack problem parameters
 weights = [350, 2200, 333, 160, 192, 80, 25, 200, 70, 38]
@@ -13,6 +15,14 @@ ga_solver.solve()
 
 ma_solver = MemeticAlgorithm(weights, values, max_weight)
 ma_solver.solve()
+
+es_solver = EvolutionStrategy(weights, values, max_weight)
+es_solver.solve()
+
+de_solver = DifferentialEvolution(weights, values, max_weight)
+de_solver.solve()
+
+
 #
 # # print(sum([0, 1, 0] * [3, 4, 7]))
 #
