@@ -2,6 +2,8 @@ import pygad
 
 from knapsack_solvers.algorithms.genetic_algorithm import GeneticAlgorithm
 from knapsack_solvers.algorithms.memetic_algorithm import MemeticAlgorithm
+from knapsack_solvers.algorithms.memetic_algorithm_hybrid_local_search import MemeticAlgorithmHybridLocalSearch
+from knapsack_solvers.algorithms.memetic_algorithm_parameter_tuning import MemeticAlgorithmParameterTuning
 from knapsack_solvers.algorithms.evolution_strategy import EvolutionStrategy
 from knapsack_solvers.algorithms.differential_evolution import DifferentialEvolution
 
@@ -11,8 +13,8 @@ weights = [2, 3, 4, 5, 9, 7, 8, 9, 10, 12, 1, 2, 2, 3, 8, 7, 8, 4, 6, 5, 14, 13,
 values = [3, 4, 8, 8, 10, 11, 14, 13, 6, 7, 9, 3, 4, 7, 20, 12, 13, 8, 9, 6, 21, 22, 20, 5, 8, 8, 12, 25, 24, 13]
 max_weight = 50
 
-# weights = [350, 2200, 333, 160, 192, 80, 25, 200, 70, 38,350, 2200, 333, 160, 192, 80, 25, 200, 70, 38]
-# values = [60, 500, 40, 150, 30, 15, 5, 500, 100, 10,60, 500, 40, 150, 30, 15, 5, 500, 100, 10]
+# weights = [350, 2200, 333, 160, 192, 80, 25, 200, 70, 38]
+# values = [60, 500, 40, 150, 30, 15, 5, 500, 100, 10]
 # max_weight = 3000
 
 ga_solver = GeneticAlgorithm(weights, values, max_weight)
@@ -20,6 +22,12 @@ ga_solver.solve()
 
 ma_solver = MemeticAlgorithm(weights, values, max_weight)
 ma_solver.solve()
+#
+# mahls_solver = MemeticAlgorithmHybridLocalSearch(weights, values, max_weight)
+# mahls_solver.solve()
+
+# mapt_solver = MemeticAlgorithmParameterTuning(weights, values, max_weight)
+# mapt_solver.solve()
 
 es_solver = EvolutionStrategy(weights, values, max_weight)
 es_solver.solve()
