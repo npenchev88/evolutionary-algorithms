@@ -8,6 +8,7 @@
 import time
 
 import numpy as np
+from knapsack_solvers.utils.timeout import with_timeout
 
 
 class MemeticAlgorithm:
@@ -57,29 +58,41 @@ class MemeticAlgorithm:
             if np.random.rand() < self.mutation_rate:
                 individual[i] = 1 - individual[i]
 
-    def solve(self):
+    def outer_function(x):
+        def inner_function(y):
+            return x + y
+
+        return inner_function
+
+    def runner(self, population):
+        def closure_fn():
+            nonlocal population
+            for generation in range(self.number_of_generations):
+                new_population = []
+                for _ in range(self.population_size // 2):
+                    parent1 = self.tournament_selection(population, self.tournament_size)
+                    parent2 = self.tournament_selection(population, self.tournament_size)
+                    child1, child2 = self.crossover(parent1, parent2)
+                    self.mutate(child1)
+                    self.mutate(child2)
+                    # Apply local search to each child
+                    child1 = self.local_search(child1)
+                    child2 = self.local_search(child2)
+                    new_population.extend([child1, child2])
+                population = new_population
+
+        return closure_fn
+
+    def solve(self, timeout):
         start_time = time.time()
         population = np.random.randint(2, size=(self.population_size, len(self.weights)))
 
-        for generation in range(self.number_of_generations):
-            new_population = []
-            for _ in range(self.population_size // 2):
-                parent1 = self.tournament_selection(population, self.tournament_size)
-                parent2 = self.tournament_selection(population, self.tournament_size)
-                child1, child2 = self.crossover(parent1, parent2)
-                self.mutate(child1)
-                self.mutate(child2)
-                # Apply local search to each child
-                child1 = self.local_search(child1)
-                child2 = self.local_search(child2)
-                new_population.extend([child1, child2])
-            population = new_population
+        with_timeout(timeout, self.runner(population), "MEMETIC ALGORITHM")
 
-            # Optionally, print best solution of each generation
-            # best_solution = max(population, key=self.fitness)
-            # print(f"Generation {generation + 1}: Best value = {self.fitness(best_solution)}, Solution = {best_solution}")
         end_time = time.time()
         total_time = end_time - start_time
         # Final best solution
         best_solution = max(population, key=self.fitness)
-        print(f"MEMETIC ALGORITHM Final Best value = {self.fitness(best_solution)}, Solution = {best_solution}, Total time: {total_time}")
+        print(
+            f"MEMETIC ALGORITHM Final Best value = {self.fitness(best_solution)}, Solution = N/A, Total time: {total_time}")
+        return ["MEMETIC ALGORITHM", self.fitness(best_solution), total_time]

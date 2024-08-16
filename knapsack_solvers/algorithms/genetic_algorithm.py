@@ -27,7 +27,7 @@ class GeneticAlgorithm:
         if total_weight > self.max_weight:
             return 0  # Penalize over-weight solutions
         return total_value
-
+# sredna predeglena
     def tournament_selection(self, pop, k):
         best = np.random.randint(len(pop))
         for i in np.random.randint(0, len(pop), k - 1):
@@ -70,4 +70,5 @@ class GeneticAlgorithm:
         total_time = end_time - start_time
         # Final best solution
         best_solution = max(population, key=self.fitness)
-        print(f"GENETIC ALGORITHM Final Best value = {self.fitness(best_solution)}, Solution = {best_solution}, total time: {total_time}")
+        print(f"GENETIC ALGORITHM Final Best value = {self.fitness(best_solution)}, Solution = N/A, total time: {total_time}")
+        return ["GENETIC ALGORITHM", self.fitness(best_solution), total_time]

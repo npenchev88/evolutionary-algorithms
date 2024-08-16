@@ -55,4 +55,5 @@ class DifferentialEvolution:
         total_time = end_time - start_time
         # Final best solution
         best_solution = max(population, key=self.fitness)
-        print(f"DIFFERIENTIAL EVOLUTION Final Best value = {self.fitness(best_solution)}, Solution = {best_solution}, Total time: {total_time}")
+        print(f"DIFFERIENTIAL EVOLUTION Final Best value = {self.fitness(best_solution)}, Solution = N/A, Total time: {total_time}")
+        return ["DIFFERIENTIAL EVOLUTION", self.fitness(best_solution), total_time]
