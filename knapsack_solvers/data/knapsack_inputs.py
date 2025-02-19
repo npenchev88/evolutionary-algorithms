@@ -723,7 +723,7 @@ def geom_rect_show(first_n):
                 show_legend=False
             ) +
             labs(
-                title='Knapsack',
+                title='Rectangular Representation of Asset Weights and Values in the Knapsack Portfolio',
                 x='Weight',
                 y='Value'
             )

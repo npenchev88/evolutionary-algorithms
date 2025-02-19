@@ -64,10 +64,6 @@ for number_of_items in ITEMS_FOR_EXPLORATION:
     max_weight = int(sum(weights_cut) / 2)
     # print(f"max weight is: {max_weight}")
 
-    # weights = [350, 2200, 333, 160, 192, 80, 25, 200, 70, 38]
-    # values = [60, 500, 40, 150, 30, 15, 5, 500, 100, 10]
-    # max_weight = 3000
-
     # dp_solver = DP(weights_cut, values_cut, max_weight)
     # dp_result = with_timeout(timeout, dp_solver.solve, "DYNAMIC PROGRAMMING")
     # fill_data(data, dp_result, number_of_items, timeout)
