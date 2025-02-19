@@ -37,7 +37,7 @@ class EvolutionStrategy:
             new_population = []
             for individual in population:
                 offspring = self.mutate(individual.copy(), self.sigma)
-                
+
                 if self.fitness(offspring) > self.fitness(individual):
                     new_population.append(offspring)
                 else:
