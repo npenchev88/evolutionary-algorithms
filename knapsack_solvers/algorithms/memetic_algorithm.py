@@ -91,7 +91,7 @@ class MemeticAlgorithm:
 
         end_time = time.time()
         total_time = end_time - start_time
-        # Final best solution
+
         best_solution = max(population, key=self.fitness)
         print(
             f"MEMETIC ALGORITHM Final Best value = {self.fitness(best_solution)}, Solution = N/A, Total time: {total_time}")

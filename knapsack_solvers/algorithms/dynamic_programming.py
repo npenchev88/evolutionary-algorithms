@@ -12,13 +12,10 @@ class DP:
     def solve(self):
         start_time = time.time()
 
-        # Number of items
         n = len(self.values)
 
-        # Create a 2D DP array to store the maximum value at each n and capacity
         dp = [[0 for _ in range(self.capacity + 1)] for _ in range(n + 1)]
 
-        # Build the dp array from bottom up
         for i in range(1, n + 1):
             for w in range(self.capacity + 1):
                 if self.weights[i - 1] <= w:

@@ -28,7 +28,8 @@ class MemeticAlgorithmHybridLocalSearch:
         current_fitness = self.fitness(individual)
         for i in range(len(individual)):
             neighbor = individual.copy()
-            neighbor[i] = 1 - neighbor[i]  # Flip the bit
+            # Flip the bit
+            neighbor[i] = 1 - neighbor[i]
             neighbor_fitness = self.fitness(neighbor)
             if neighbor_fitness > current_fitness:
                 individual = neighbor
@@ -42,7 +43,8 @@ class MemeticAlgorithmHybridLocalSearch:
         while temp > 1:
             neighbor = current.copy()
             i = np.random.randint(0, len(current) - 1)
-            neighbor[i] = 1 - neighbor[i]  # Flip a bit
+            # Flip a bit
+            neighbor[i] = 1 - neighbor[i]
             neighbor_fitness = self.fitness(neighbor)
             if neighbor_fitness > current_fitness or np.random.rand() < np.exp(
                     (neighbor_fitness - current_fitness) / temp):
@@ -105,7 +107,7 @@ class MemeticAlgorithmHybridLocalSearch:
 
         end_time = time.time()
         total_time = end_time - start_time
-        # Final best solution
+
         best_solution = max(population, key=self.fitness)
         print(
             f"MEMETIC ALGORITHM HYBRID LOCAL SEARCH Final Best value = {self.fitness(best_solution)}, Solution = N/A, Total time: {total_time}")

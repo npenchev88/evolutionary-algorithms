@@ -28,7 +28,7 @@ class MemeticAlgorithmParameterTuning:
         total_weight = np.dot(individual, self.weights)
         total_value = np.dot(individual, self.values)
         if total_weight > self.max_weight:
-            return 0  # Penalize over-weight solutions
+            return 0
         return total_value
 
     def local_search(self, individual):
@@ -37,7 +37,7 @@ class MemeticAlgorithmParameterTuning:
             new_individual = individual.copy()
             new_individual[i] = 1 - new_individual[i]
             if self.fitness(new_individual) > self.fitness(individual):
-                individual = new_individual  # Accept the new individual
+                individual = new_individual
         return individual
 
     def tournament_selection(self, pop, k):

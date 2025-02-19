@@ -18,7 +18,7 @@ class DifferentialEvolution:
         total_weight = np.dot(individual, self.weights)
         total_value = np.dot(individual, self.values)
         if total_weight > self.max_weight:
-            return 0  # Penalize over-weight solutions
+            return 0
         return total_value
 
     def crossover(self, target, donor):

@@ -20,11 +20,11 @@ class EvolutionStrategy:
         total_weight = np.dot(individual, self.weights)
         total_value = np.dot(individual, self.values)
         if total_weight > self.max_weight:
-            return 0  # Penalize over-weight solutions
+            return 0
         return total_value
 
     def mutate(self, individual, sigma):
-        for _ in range(sigma):  # Mutate 'sigma' bits per individual
+        for _ in range(sigma):
             idx = np.random.randint(0, len(individual))
             individual[idx] = 1 - individual[idx]
         return individual
@@ -36,9 +36,8 @@ class EvolutionStrategy:
         for generation in range(self.number_of_generations):
             new_population = []
             for individual in population:
-                # Create offspring by mutating the individual
                 offspring = self.mutate(individual.copy(), self.sigma)
-                # Select the better individual for the next generation
+
                 if self.fitness(offspring) > self.fitness(individual):
                     new_population.append(offspring)
                 else:
@@ -50,7 +49,7 @@ class EvolutionStrategy:
             # print(f"Generation {generation}: Best Value = {fitness(best_individual)}")
         end_time = time.time()
         total_time = end_time - start_time
-        # Final best solution
+
         best_solution = max(population, key=self.fitness)
         print(f"EVOLUTION STRATEGY Final Best value = {self.fitness(best_solution)}, Solution = N/A, Total time: {total_time}")
         return ["EVOLUTION STRATEGY", self.fitness(best_solution), total_time]
