@@ -3,23 +3,29 @@ import time
 
 import numpy as np
 
+from knapsack_solvers.utils.decorators import evolutionary_solver
+from knapsack_solvers.utils.fitness import calculate_fitness
+
 
 class DifferentialEvolution:
-    def __init__(self, weights, values, max_weight):
+    def __init__(self, weights, values, max_weight, adjusted_values=None, fitness_func=calculate_fitness):
         self.weights = weights
         self.values = values
+        self.adjusted_values = adjusted_values or values
         self.max_weight = max_weight
         self.population_size = 50
         self.number_of_generations = 100
-        self.F = 0.8
-        self.CR = 0.9
+        self.F = 0.8  # Differential weight
+        self.CR = 0.9  # Crossover rate
+        self.fitness_func = fitness_func
+        self._population = []
+
+    @property
+    def population(self):
+        return self._population
 
     def fitness(self, individual):
-        total_weight = np.dot(individual, self.weights)
-        total_value = np.dot(individual, self.values)
-        if total_weight > self.max_weight:
-            return 0
-        return total_value
+        return self.fitness_func(individual, self.weights, self.adjusted_values, self.max_weight)
 
     def crossover(self, target, donor):
         trial = target.copy()
@@ -28,32 +34,25 @@ class DifferentialEvolution:
                 trial[i] = donor[i]
         return trial
 
+    @evolutionary_solver
     def solve(self):
-        start_time = time.time()
-        population = np.random.randint(2, size=(self.population_size, len(self.weights)))
+        self._population = np.random.randint(2, size=(self.population_size, len(self.weights)))
 
-        for generation in range(self.number_of_generations):
+        for _ in range(self.number_of_generations):
             new_population = []
             for i in range(self.population_size):
-                target = population[i]
-                a, b, c = population[np.random.choice(self.population_size, 3, replace=False)]
-                # Differential mutation
+                target = self._population[i]
+                indices = np.random.choice([j for j in range(self.population_size) if j != i], 3, replace=False)
+                a, b, c = self._population[indices]
+                # Differential mutation using modulo 2 to keep binary
                 donor = np.where(np.random.rand(len(target)) < self.CR, (a + self.F * (b - c)) % 2, target).astype(int)
-                # Discrete recombination
                 trial = self.crossover(target, donor)
-                # Selection
+
                 if self.fitness(trial) > self.fitness(target):
                     new_population.append(trial)
                 else:
                     new_population.append(target)
-            population = np.array(new_population)
+            self._population = np.array(new_population)
 
-            # Optionally, print best solution of each generation
-            # best_solution = max(population, key=self.fitness)
-            # print(f"Generation {generation}: Best Value = {fitness(best_individual)}")
-        end_time = time.time()
-        total_time = end_time - start_time
-        # Final best solution
-        best_solution = max(population, key=self.fitness)
-        print(f"DIFFERIENTIAL EVOLUTION Final Best value = {self.fitness(best_solution)}, Solution = N/A, Total time: {total_time}")
-        return ["DIFFERIENTIAL EVOLUTION", self.fitness(best_solution), total_time]
+
+        return self._population
