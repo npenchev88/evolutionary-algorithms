@@ -7,92 +7,38 @@
 # Replacement: Form a new generation, replacing some of the less fit individuals with the new ones.
 import time
 
+from knapsack_solvers.algorithms.genetic_algorithm import GeneticAlgorithm
+from knapsack_solvers.utils.decorators import evolutionary_solver
 import numpy as np
-from knapsack_solvers.utils.timeout import with_timeout
 
 
-class MemeticAlgorithm:
-    def __init__(self, weights, values, max_weight):
-        self.weights = weights
-        self.values = values
-        self.max_weight = max_weight
-        self.population_size = 50
-        self.number_of_generations = 100
-        self.mutation_rate = 0.01
-        self.crossover_rate = 0.7
-        self.tournament_size = 5
-
-    def fitness(self, individual):
-        total_weight = np.dot(individual, self.weights)
-        total_value = np.dot(individual, self.values)
-        if total_weight > self.max_weight:
-            return 0  # Penalize over-weight solutions
-        return total_value
-
+class MemeticAlgorithm(GeneticAlgorithm):
     def local_search(self, individual):
         for i in range(len(individual)):
-            # Try flipping each bit and check if it improves the fitness
             new_individual = individual.copy()
             new_individual[i] = 1 - new_individual[i]
             if self.fitness(new_individual) > self.fitness(individual):
-                individual = new_individual  # Accept the new individual
+                individual = new_individual
         return individual
 
-    def tournament_selection(self, pop, k):
-        best = np.random.randint(len(pop))
-        for i in np.random.randint(0, len(pop), k - 1):
-            if self.fitness(pop[i]) > self.fitness(pop[best]):
-                best = i
-        return pop[best]
+    @evolutionary_solver
+    def solve(self):
+        self._population = np.random.randint(2, size=(self.population_size, len(self.weights)))
 
-    def crossover(self, parent1, parent2):
-        if np.random.rand() < self.crossover_rate:
-            point = np.random.randint(1, len(self.weights) - 1)
-            child1 = np.concatenate((parent1[:point], parent2[point:]))
-            child2 = np.concatenate((parent2[:point], parent1[point:]))
-            return child1, child2
-        return parent1, parent2
+        for _ in range(self.number_of_generations):
+            new_population = []
+            for _ in range(self.population_size // 2):
+                parent1 = self.selection_func(self._population, self.tournament_size, self.fitness)
+                parent2 = self.selection_func(self._population, self.tournament_size, self.fitness)
+                child1, child2 = self.crossover_func(parent1, parent2, self.crossover_rate)
+                self.mutation_func(child1, self.mutation_rate)
+                self.mutation_func(child2, self.mutation_rate)
 
-    def mutate(self, individual):
-        for i in range(len(individual)):
-            if np.random.rand() < self.mutation_rate:
-                individual[i] = 1 - individual[i]
+                # 🔁 Add local search before inserting to population
+                child1 = self.local_search(child1)
+                child2 = self.local_search(child2)
 
-    def outer_function(x):
-        def inner_function(y):
-            return x + y
+                new_population.extend([child1, child2])
+            self._population = new_population
 
-        return inner_function
-
-    def runner(self, population):
-        def closure_fn():
-            nonlocal population
-            for generation in range(self.number_of_generations):
-                new_population = []
-                for _ in range(self.population_size // 2):
-                    parent1 = self.tournament_selection(population, self.tournament_size)
-                    parent2 = self.tournament_selection(population, self.tournament_size)
-                    child1, child2 = self.crossover(parent1, parent2)
-                    self.mutate(child1)
-                    self.mutate(child2)
-                    # Apply local search to each child
-                    child1 = self.local_search(child1)
-                    child2 = self.local_search(child2)
-                    new_population.extend([child1, child2])
-                population = new_population
-
-        return closure_fn
-
-    def solve(self, timeout):
-        start_time = time.time()
-        population = np.random.randint(2, size=(self.population_size, len(self.weights)))
-
-        with_timeout(timeout, self.runner(population), "MEMETIC ALGORITHM")
-
-        end_time = time.time()
-        total_time = end_time - start_time
-
-        best_solution = max(population, key=self.fitness)
-        print(
-            f"MEMETIC ALGORITHM Final Best value = {self.fitness(best_solution)}, Solution = N/A, Total time: {total_time}")
-        return ["MEMETIC ALGORITHM", self.fitness(best_solution), total_time]
+        return self._population

@@ -1,9 +1,7 @@
 import numpy as np
 
 
-def calculate_fitness(weights, values, individual, max_weight):
+def calculate_fitness(individual, weights, values, max_weight):
     total_weight = np.dot(individual, weights)
     total_value = np.dot(individual, values)
-    if total_weight > max_weight:
-        return 0
-    return total_value
+    return total_value if total_weight <= max_weight else 0

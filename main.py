@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pygad
 
 import pandas as pd
@@ -11,10 +13,11 @@ from knapsack_solvers.algorithms.evolution_strategy import EvolutionStrategy
 from knapsack_solvers.algorithms.differential_evolution import DifferentialEvolution
 from knapsack_solvers.algorithms.base import Base
 from knapsack_solvers.data.knapsack_inputs import weights
-from knapsack_solvers.data.knapsack_inputs import values
+from knapsack_solvers.data.knapsack_inputs import adjusted_values
 
 # ITEMS_FOR_EXPLORATION = [3,5,10,15,20,30,50,100,200,300,400,500,600,700,800,900,1000]
 ITEMS_FOR_EXPLORATION = [10, 100, 1000, 10000]
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 #
 # Knapsack problem parameters
@@ -60,53 +63,37 @@ for number_of_items in ITEMS_FOR_EXPLORATION:
     print(f"Allowed timeout {timeout}")
 
     weights_cut = weights[:number_of_items]
-    values_cut = values[:number_of_items]
+    values_cut = adjusted_values[:number_of_items]
     max_weight = int(sum(weights_cut) / 2)
-    # print(f"max weight is: {max_weight}")
 
-    # dp_solver = DP(weights_cut, values_cut, max_weight)
-    # dp_result = with_timeout(timeout, dp_solver.solve, "DYNAMIC PROGRAMMING")
-    # fill_data(data, dp_result, number_of_items, timeout)
-    # # dp_solver.solve()
-    #
-    # base_solver = Base(weights_cut, values_cut, max_weight, 100)
-    # base_result = with_timeout(timeout, base_solver.solve, "BASE")
-    # fill_data(data, base_result, number_of_items, timeout)
-    # # base_solver.solve()
-    #
-    # ga_solver = GeneticAlgorithm(weights_cut, values_cut, max_weight)
-    # ga_result = with_timeout(timeout, ga_solver.solve, "GENETIC ALGORITHM")
-    # fill_data(data, ga_result, number_of_items, timeout)
-    # ga_solver.solve()
+    dp_solver = DP(weights_cut, values_cut, max_weight)
+    dp_result = with_timeout(timeout, dp_solver.solve, "DYNAMIC PROGRAMMING")
+    fill_data(data, dp_result, number_of_items, timeout)
 
-    # ma_solver = MemeticAlgorithm(weights_cut, values_cut, max_weight)
-    # ma_result = ma_solver.solve(timeout)
-    # fill_data(data, ma_result, number_of_items, timeout)
-    # ma_solver.solve()
-    #
+    base_solver = Base(weights_cut, values_cut, max_weight, 100)
+    base_result = base_solver.solve(timeout=timeout)
+    fill_data(data, base_result, number_of_items, timeout)
+
+    ga_solver = GeneticAlgorithm(weights_cut, values_cut, max_weight)
+    ga_result = ga_solver.solve(timeout=timeout)
+    fill_data(data, ga_result, number_of_items, timeout)
+
+    ma_solver = MemeticAlgorithm(weights_cut, values_cut, max_weight)
+    ma_result = ma_solver.solve(timeout=timeout)
+    fill_data(data, ma_result, number_of_items, timeout)
+
     mahls_solver = MemeticAlgorithmHybridLocalSearch(weights_cut, values_cut, max_weight)
-    mahls_result = mahls_solver.solve(timeout)
+    mahls_result = mahls_solver.solve(timeout=timeout)
     fill_data(data, mahls_result, number_of_items, timeout)
-    # mahls_solver.solve()
 
-    # # The best parameters are what we are currently using in the MA alg above
-    # mapt_solver = MemeticAlgorithmParameterTuning(weights, values, max_weight)
-    # mapt_solver.solve()
+    es_solver = EvolutionStrategy(weights_cut, values_cut, max_weight)
+    es_result = es_solver.solve(timeout=timeout)
+    fill_data(data, es_result, number_of_items, timeout)
 
-    # es_solver = EvolutionStrategy(weights_cut, values_cut, max_weight)
-    # es_result = with_timeout(timeout, es_solver.solve, "EVOLUTION STRATEGY")
-    # fill_data(data, es_result, number_of_items, timeout)
-    # # es_solver.solve()
-    #
-    # de_solver = DifferentialEvolution(weights_cut, values_cut, max_weight)
-    # de_result = with_timeout(timeout, de_solver.solve, "DIFFERIENTIAL EVOLUTION")
-    # fill_data(data, de_result, number_of_items, timeout)
-    # de_solver.solve()
+    de_solver = DifferentialEvolution(weights_cut, values_cut, max_weight)
+    de_result = de_solver.solve(timeout=timeout)
+    fill_data(data, de_result, number_of_items, timeout)
 
-# Create a DataFrame using the data
 df = pd.DataFrame(data)
 
-# Save the DataFrame to a CSV file
-df.to_csv('table5.csv', index=False)
-
-print("Table saved to table.csv")
+df.to_csv(f"table_{timestamp}.csv", index=False)

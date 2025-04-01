@@ -6,71 +6,56 @@
 # Mutation: Introduce random changes to new individuals.
 # Replacement: Form a new generation.
 import time
-
+from knapsack_solvers.utils.fitness import calculate_fitness
+from knapsack_solvers.utils.selection import tournament_selection
+from knapsack_solvers.utils.mutation import bit_flip_mutation
+from knapsack_solvers.utils.crossover import single_point_crossover
+from knapsack_solvers.utils.decorators import evolutionary_solver
 import numpy as np
 
 
 class GeneticAlgorithm:
-    def __init__(self, weights, values, max_weight):
+    def __init__(self, weights, values, max_weight, adjusted_values=None,
+                 fitness_func=calculate_fitness, selection_func=tournament_selection,
+                 crossover_func=single_point_crossover, mutation_func=bit_flip_mutation):
         self.weights = weights
         self.values = values
         self.max_weight = max_weight
+        self.adjusted_values = adjusted_values or values
+        self.fitness_func = fitness_func
+        self.selection_func = selection_func
+        self.crossover_func = crossover_func
+        self.mutation_func = mutation_func
+
+        # Hyperparameters
         self.population_size = 50
         self.number_of_generations = 100
         self.mutation_rate = 0.01
         self.crossover_rate = 0.7
         self.tournament_size = 5
 
+        self._population = []  # Internal storage
+
+    @property
+    def population(self):
+        return self._population
+
     def fitness(self, individual):
-        total_weight = np.dot(individual, self.weights)
-        total_value = np.dot(individual, self.values)
-        if total_weight > self.max_weight:
-            return 0
-        return total_value
+        return self.fitness_func(individual, self.weights, self.adjusted_values, self.max_weight)
 
-    # sredna predeglena
-    def tournament_selection(self, pop, k):
-        best = np.random.randint(len(pop))
-        for i in np.random.randint(0, len(pop), k - 1):
-            if self.fitness(pop[i]) > self.fitness(pop[best]):
-                best = i
-        return pop[best]
-
-    def crossover(self, parent1, parent2):
-        if np.random.rand() < self.crossover_rate:
-            point = np.random.randint(1, len(self.weights) - 1)
-            child1 = np.concatenate((parent1[:point], parent2[point:]))
-            child2 = np.concatenate((parent2[:point], parent1[point:]))
-            return child1, child2
-        return parent1, parent2
-
-    def mutate(self, individual):
-        for i in range(len(individual)):
-            if np.random.rand() < self.mutation_rate:
-                individual[i] = 1 - individual[i]
-
+    @evolutionary_solver
     def solve(self):
-        start_time = time.time()
-        population = np.random.randint(2, size=(self.population_size, len(self.weights)))
+        self._population = np.random.randint(2, size=(self.population_size, len(self.weights)))
 
-        for generation in range(self.number_of_generations):
+        for _ in range(self.number_of_generations):
             new_population = []
             for _ in range(self.population_size // 2):
-                parent1 = self.tournament_selection(population, self.tournament_size)
-                parent2 = self.tournament_selection(population, self.tournament_size)
-                child1, child2 = self.crossover(parent1, parent2)
-                self.mutate(child1)
-                self.mutate(child2)
+                parent1 = self.selection_func(self._population, self.tournament_size, self.fitness)
+                parent2 = self.selection_func(self._population, self.tournament_size, self.fitness)
+                child1, child2 = self.crossover_func(parent1, parent2, self.crossover_rate)
+                self.mutation_func(child1, self.mutation_rate)
+                self.mutation_func(child2, self.mutation_rate)
                 new_population.extend([child1, child2])
-            population = new_population
+            self._population = new_population
 
-            # Optionally, print best solution of each generation
-            # best_solution = max(population, key=self.fitness)
-            # print(f"Generation {generation + 1}: Best value = {self.fitness(best_solution)}, Solution = {best_solution}")
-        end_time = time.time()
-        total_time = end_time - start_time
-
-        best_solution = max(population, key=self.fitness)
-        print(
-            f"GENETIC ALGORITHM Final Best value = {self.fitness(best_solution)}, Solution = N/A, total time: {total_time}")
-        return ["GENETIC ALGORITHM", self.fitness(best_solution), total_time]
+        return self._population
