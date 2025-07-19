@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from plotnine import ggplot, aes, geom_rect, labs
+from plotnine import ggplot, aes, geom_rect, labs, theme, element_text
 from knapsack_solvers.utils.risk_adjustment import compute_sharpe_adjusted_values
 
 # weights = [int(x) for x in np.random.normal(10, 3, 10000)]
@@ -2682,7 +2682,7 @@ risk = [3.2961624752234098, 2.1988404963020116, 1.9287614226741838, 1.1673271699
         3.371942848301545]
 
 adjusted_values = compute_sharpe_adjusted_values(values, risk)
-# Cap only for visualization, so we can see the distribution clearly
+# Cap only for visualization, so we can see the distribution clearly!!!!
 sharpe_ratio = [min(v / r, 20) for v, r in zip(values, risk)]
 
 def geom_rect_show(first_n):
@@ -2696,7 +2696,7 @@ def geom_rect_show(first_n):
     y_starts = [0]
     y_ends = []
 
-    # Calculate x_starts, x_ends, y_starts, and y_ends based on cumulative sums
+
     for i in range(len(x_values)):
         x_ends.append(x_starts[-1] + x_values[i])
         y_ends.append(y_starts[-1] + y_values[i])
@@ -2722,13 +2722,19 @@ def geom_rect_show(first_n):
                 show_legend=False
             ) +
             labs(
-                title='Rectangular Representation of Investment cost and Sharpe ratio in the Portfolio',
-                x='Investment cost',
-                y='Sharpe ratio'
+                title='Rectangular Representation of IC and Sharpe Ratio in the Portfolio',
+                x='Investment Cost',
+                y='Sharpe Ratio'
+            ) +
+            theme(
+                plot_title=element_text(size=34, weight='bold'),
+                axis_title_x=element_text(size=30, weight='bold'),
+                axis_title_y=element_text(size=30, weight='bold'),
+                axis_text=element_text(size=28, weight='bold')
             )
     )
 
     p.show()
 
-# geom_rect_show(100)
+geom_rect_show(100)
 
