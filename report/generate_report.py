@@ -35,6 +35,10 @@ def main():
     metrics_per_run = hv_igd_tables(df_fronts)
     metrics_agg = aggregate_ci(metrics_per_run)
 
+    print(f"metrics_per_run shape: {metrics_per_run.shape}")
+    print(f"metrics_agg shape: {metrics_agg.shape}")
+    print("Saving metric CSVs...")
+
     # Save metric CSVs
     metrics_per_run.to_csv(os.path.join(OUTPUT_DIR, "summary_metrics_per_run.csv"), index=False)
     metrics_agg.to_csv(os.path.join(OUTPUT_DIR, "summary_metrics_agg.csv"), index=False)

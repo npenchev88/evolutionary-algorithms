@@ -1,5 +1,6 @@
 # plots.py
-import os; os.environ["MPLBACKEND"] = "Agg"
+import os
+os.environ["MPLBACKEND"] = "Agg"
 
 import numpy as np
 import pandas as pd

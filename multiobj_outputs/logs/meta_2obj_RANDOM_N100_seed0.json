@@ -3,7 +3,8 @@
     "method": "RANDOM",
     "seed": 0,
     "time_cap_s": 200,
-    "elapsed_s": 5.7383131980896,
+    "elapsed_s": 200.1400506929931,
     "pop_size": null,
-    "saved_rows": 39
+    "saved_rows": 64,
+    "n_samples_timeboxed": 2349056
 }

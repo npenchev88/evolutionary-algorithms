@@ -1,5 +1,6 @@
 from datetime import datetime
-
+import os
+os.environ["MPLBACKEND"] = "Agg"  # без GUI; няма Qt/Wayland
 import numpy as np
 
 import pandas as pd

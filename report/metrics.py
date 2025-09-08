@@ -1,4 +1,3 @@
-
 import pandas as pd
 import numpy as np
 import glob
@@ -6,6 +5,9 @@ import json
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.indicators.hv import HV
 from pymoo.indicators.igd_plus import IGDPlus
+import os
+os.environ["MPLBACKEND"] = "Agg"  # без GUI; няма Qt/Wayland
+
 
 def load_fronts(fronts_dir):
     """Reads all front CSVs and concatenates them."""
