@@ -7,10 +7,10 @@ from plotnine import (
 )
 
 
-df = pd.read_csv('../../table_20250331_131558.csv')
-df['Result'] = pd.to_numeric(df['Result'], errors='coerce')
-df['Time'] = pd.to_numeric(df['Time'], errors='coerce')
-df = df.dropna(subset=['Result', 'Time'])
+df = pd.read_csv('./new_results_table.csv')
+df['Result'] = pd.to_numeric(df['Result_mean'], errors='coerce')
+df['Time'] = pd.to_numeric(df['Time_mean'], errors='coerce')
+df = df.dropna(subset=['Result_mean', 'Time_mean'])
 
 
 p = (
