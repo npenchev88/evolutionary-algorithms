@@ -2,9 +2,9 @@
     "N": 1000,
     "method": "RANDOM",
     "seed": 1,
-    "time_cap_s": 350,
-    "elapsed_s": 350.39872387598734,
+    "time_cap_s": 175,
+    "elapsed_s": 175.29318212799262,
     "pop_size": null,
-    "saved_rows": 66,
-    "n_samples_timeboxed": 1380352
+    "saved_rows": 55,
+    "n_samples_timeboxed": 880640
 }

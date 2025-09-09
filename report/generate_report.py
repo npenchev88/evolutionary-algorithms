@@ -1,4 +1,3 @@
-
 import os
 os.environ["MPLBACKEND"] = "Agg"   # headless matplotlib to avoid Qt warnings
 
@@ -9,7 +8,7 @@ from metrics import (
     load_fronts, load_meta, hv_igd_tables, aggregate_ci
 )
 from plots import (
-    plot_pareto, plot_hv_box, plot_runtime
+    plot_pareto, plot_hv_box, plot_runtime, plot_box_multi
 )
 
 FRONTS_DIR = "multiobj_outputs/fronts"
@@ -35,10 +34,6 @@ def main():
     metrics_per_run = hv_igd_tables(df_fronts)
     metrics_agg = aggregate_ci(metrics_per_run)
 
-    print(f"metrics_per_run shape: {metrics_per_run.shape}")
-    print(f"metrics_agg shape: {metrics_agg.shape}")
-    print("Saving metric CSVs...")
-
     # Save metric CSVs
     metrics_per_run.to_csv(os.path.join(OUTPUT_DIR, "summary_metrics_per_run.csv"), index=False)
     metrics_agg.to_csv(os.path.join(OUTPUT_DIR, "summary_metrics_agg.csv"), index=False)
@@ -48,6 +43,7 @@ def main():
     for n in unique_Ns:
         plot_pareto(df_fronts, n, os.path.join(OUTPUT_DIR, f"pareto_N{n}.png"))
         plot_hv_box(metrics_per_run, n, os.path.join(OUTPUT_DIR, f"hv_box_N{n}.png"))
+        plot_box_multi(metrics_per_run, n, os.path.join(OUTPUT_DIR, f"box_multi_N{n}.png"))
 
     plot_runtime(meta_df, os.path.join(OUTPUT_DIR, "runtime.png"))
 
@@ -89,9 +85,30 @@ def generate_markdown_report(meta_df, metrics_agg, unique_Ns):
 
         return "".join(lines)
 
-    report_content = f"""# Multi-Objective Experiment Report
+    report_content = f"""# Multi-Objective Portfolio Optimization: Experimental Report
+**Authors:** N. Penchev and A. Marchev jr.
 
-*Report generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*
+## Introduction
+
+This report presents an experimental comparison of algorithms for a multi-objective knapsack-like portfolio optimization problem. The goal is to select a portfolio of assets that simultaneously maximizes the expected 'Value' (return) and minimizes the associated 'Risk'. These two objectives are often in conflict, requiring a trade-off. Multi-objective optimization is well-suited for this problem as it does not require a single, arbitrary weighting of risk versus return, but instead identifies a set of optimal trade-off solutions, known as the Pareto front.
+
+## Data Description
+
+The experiments were conducted on a set of synthetically generated problem instances with varying sizes, where N represents the number of available assets. The problem sizes are N ∈ {{ {sorted(meta_df['N'].unique())} }}. To ensure statistical robustness, each experimental run was repeated across multiple random seeds.
+
+The performance of each algorithm was evaluated using several standard metrics for multi-objective optimization:
+- **Pareto Fronts:** The set of non-dominated solutions found by each algorithm.
+- **Hypervolume (HV):** Measures the volume of the objective space dominated by the obtained front. Higher is better.
+- **Inverted Generational Distance Plus (IGD+):** Measures the average distance from points in a true or reference Pareto front to the obtained front. Lower is better.
+- **Number of Non-Dominated Points (|ND|):** The number of solutions in the final Pareto front.
+
+## Algorithms
+
+Two algorithms were compared in this study:
+
+- **NSGA-II (Non-dominated Sorting Genetic Algorithm II):** A widely-used evolutionary algorithm for multi-objective optimization. It employs mechanisms of selection, crossover, and mutation to iteratively evolve a population of solutions toward the true Pareto front. Its key features include a fast non-dominated sorting procedure and a crowding distance mechanism to maintain diversity among solutions.
+
+- **Random Search:** This method serves as a baseline for comparison. It generates solutions randomly within the search space for a fixed time budget equivalent to that of NSGA-II. This helps to assess whether the sophisticated mechanisms of NSGA-II provide a significant advantage over simple, undirected search.
 
 ## 1. Setup
 
@@ -138,17 +155,22 @@ NSGA-II is expected to produce fronts that dominate the random search, demonstra
     for n in unique_Ns:
         report_content += f"### N = {n}\n![Pareto Front for N={n}](pareto_N{n}.png)\n"
 
-    report_content += """\n## 4. Runtime Overview
+    report_content += """\n## 4. Combined Boxplots (HV / IGD / |ND|)
 
-The following plot shows the mean elapsed time per run, with error bars representing the standard deviation across seeds.
+"""
+    for n in unique_Ns:
+        report_content += f"### N = {n}\n![N={n} Combined](box_multi_N{n}.png)\n"
+
+
+    report_content += """\n## 5. Runtime Overview
 
 ![Runtime Overview](runtime.png)
 
 """
 
-    runtime_summary = meta_df.groupby(['N', 'method'])['elapsed_s'].agg(['mean', 'std']).reset_index()
-    report_content += "### Mean Runtime (s) ± Std Dev\n\n" \
-                      + runtime_summary.to_markdown(index=False, floatfmt=".2f") + "\n"
+    # runtime_summary = meta_df.groupby(['N', 'method'])['elapsed_s'].agg(['mean', 'std']).reset_index()
+    # report_content += "### Mean Runtime (s) ± Std Dev\n\n" \
+    #                   + runtime_summary.to_markdown(index=False, floatfmt=".2f") + "\n"
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     with open(os.path.join(OUTPUT_DIR, "REPORT.md"), "w") as f:

@@ -2,9 +2,9 @@
     "N": 100,
     "method": "NSGA2",
     "seed": 0,
-    "time_cap_s": 200,
-    "elapsed_s": 200.01857516900054,
+    "time_cap_s": 100,
+    "elapsed_s": 100.01845436199801,
     "pop_size": 200,
     "saved_rows": 200,
-    "n_evals": 1598000
+    "n_evals": 855000
 }

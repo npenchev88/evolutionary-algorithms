@@ -1,0 +1,10 @@
+{
+    "N": 10000,
+    "method": "RANDOM",
+    "seed": 7,
+    "time_cap_s": 250,
+    "elapsed_s": 252.13203551000333,
+    "pop_size": null,
+    "saved_rows": 39,
+    "n_samples_timeboxed": 206848
+}

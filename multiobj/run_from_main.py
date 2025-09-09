@@ -16,8 +16,8 @@ from multiobj.baselines import random_feasible_timeboxed
 METHODS = ["NSGA2", "RANDOM"]
 POP_SIZE = 200
 SIZES = [10, 100, 1000, 10000]
-TIME_CAPS = {10: 50, 100: 200, 1000: 350, 10000: 500}
-SEEDS = list(range(2))
+TIME_CAPS = {10: 25, 100: 100, 1000: 175, 10000: 250}
+SEEDS = list(range(30))
 OUT_DIR = "multiobj_outputs"
 def run_all():
     """Main function to run all bi-objective experiments."""
