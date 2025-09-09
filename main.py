@@ -1,7 +1,7 @@
 from datetime import datetime
-
+import os
+os.environ["MPLBACKEND"] = "Agg"  # без GUI; няма Qt/Wayland
 import numpy as np
-import pygad
 
 import pandas as pd
 from knapsack_solvers.utils.timeout import with_timeout
@@ -61,6 +61,7 @@ TIMEOUT_MAP = {10: 50,
                1000: 350,
                10000: 500}
 
+"""
 for number_of_items in ITEMS_FOR_EXPLORATION:
     print(f"NUMBER OF ITEMS {number_of_items}")
     timeout = TIMEOUT_MAP[number_of_items]
@@ -101,3 +102,9 @@ for number_of_items in ITEMS_FOR_EXPLORATION:
 df = pd.DataFrame(data)
 
 df.to_csv(f"table_{timestamp}.csv", index=False)
+"""
+
+from multiobj.run_from_main import run_all
+
+if __name__ == "__main__":
+    run_all()

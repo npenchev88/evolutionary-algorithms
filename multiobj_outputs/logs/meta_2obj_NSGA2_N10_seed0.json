@@ -1,0 +1,10 @@
+{
+    "N": 10,
+    "method": "NSGA2",
+    "seed": 0,
+    "time_cap_s": 25,
+    "elapsed_s": 25.06190075201448,
+    "pop_size": 200,
+    "saved_rows": 14,
+    "n_evals": 104585
+}
