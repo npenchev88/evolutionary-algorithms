@@ -85,12 +85,45 @@ def generate_markdown_report(meta_df, metrics_agg, unique_Ns):
 
         return "".join(lines)
 
-    report_content = f"""# Multi-Objective Portfolio Optimization: Experimental Report
+    report_content = f"""# Multi-Objectiveqq Knapsack-like Portfolio Optimization
 **Authors:** N. Penchev and A. Marchev jr.
 
-## Introduction
-
+## Introduction to the Problem
+In finance, portfolio optimization aims to balance risk and return. For large portfolios with many assets, traditional methods (e.g., exhaustive search) become computationally expensive.
 This report presents an experimental comparison of algorithms for a multi-objective knapsack-like portfolio optimization problem. The goal is to select a portfolio of assets that simultaneously maximizes the expected 'Value' (return) and minimizes the associated 'Risk'. These two objectives are often in conflict, requiring a trade-off. Multi-objective optimization is well-suited for this problem as it does not require a single, arbitrary weighting of risk versus return, but instead identifies a set of optimal trade-off solutions, known as the Pareto front.
+
+## What is the Knapsack Problem?
+A classic combinatorial optimization problem
+- You have a knapsack with a capacity W.
+- There are N items, each with value and weight
+- The Goal is to Maximize total value without exceeding the knapsack capacity. 
+\n<img src="knapsack.png" alt="Knapsack" width="300"/>\n
+
+In a portfolio context:\n
+- Capacity -> budget/limit\n
+- Item -> asset (e.g., stock, bond, etc.)\n
+- Item(Weight) -> investment cost\n
+- Item(Value) -> expected return\n
+- Item(Risk) -> Volatility/Uncertainty
+\n<img src="portfolio.png" alt="Portfolio" width="300"/>\n
+
+## Evolutionary Algorithms (EA)
+- Key Idea: Inspired by natural selection.
+- Main Steps:
+  - Initialization of a population (random solutions).
+  - Evaluation (Fitness) of each solution.
+  - Selection of the best solutions.
+  - Recombination (Crossover) and Mutation to create new solutions.
+  - Repeat until stopping criteria are met.
+\n<img src="darwin_2.png" alt="Darwin" width="300"/>\n
+
+## Algorithms
+
+Two algorithms were compared in this study:
+
+- **NSGA-II (Non-dominated Sorting Genetic Algorithm II):** A widely-used evolutionary algorithm for multi-objective optimization. It employs mechanisms of selection, crossover, and mutation to iteratively evolve a population of solutions toward the true Pareto front. Its key features include a fast non-dominated sorting procedure and a crowding distance mechanism to maintain diversity among solutions.
+
+- **Random Search:** This method serves as a baseline for comparison. It generates solutions randomly within the search space for a fixed time budget equivalent to that of NSGA-II. This helps to assess whether the sophisticated mechanisms of NSGA-II provide a significant advantage over simple, undirected search.
 
 ## Data Description
 
@@ -101,14 +134,6 @@ The performance of each algorithm was evaluated using several standard metrics f
 - **Hypervolume (HV):** Measures the volume of the objective space dominated by the obtained front. Higher is better.
 - **Inverted Generational Distance Plus (IGD+):** Measures the average distance from points in a true or reference Pareto front to the obtained front. Lower is better.
 - **Number of Non-Dominated Points (|ND|):** The number of solutions in the final Pareto front.
-
-## Algorithms
-
-Two algorithms were compared in this study:
-
-- **NSGA-II (Non-dominated Sorting Genetic Algorithm II):** A widely-used evolutionary algorithm for multi-objective optimization. It employs mechanisms of selection, crossover, and mutation to iteratively evolve a population of solutions toward the true Pareto front. Its key features include a fast non-dominated sorting procedure and a crowding distance mechanism to maintain diversity among solutions.
-
-- **Random Search:** This method serves as a baseline for comparison. It generates solutions randomly within the search space for a fixed time budget equivalent to that of NSGA-II. This helps to assess whether the sophisticated mechanisms of NSGA-II provide a significant advantage over simple, undirected search.
 
 ## 1. Setup
 
