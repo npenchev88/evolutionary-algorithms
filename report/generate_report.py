@@ -85,8 +85,8 @@ def generate_markdown_report(meta_df, metrics_agg, unique_Ns):
 
         return "".join(lines)
 
-    report_content = f"""# Multi-Objectiveqq Knapsack-like Portfolio Optimization
-**Authors:** N. Penchev and A. Marchev jr.
+    report_content = f"""# Multi-Objective Knapsack-like Portfolio Optimization using Evolutionary Algorithms
+**Authors:** Nikolay Penchev and Angel Marchev Jr.
 
 ## Introduction to the Problem
 In finance, portfolio optimization aims to balance risk and return. For large portfolios with many assets, traditional methods (e.g., exhaustive search) become computationally expensive.
@@ -97,7 +97,7 @@ A classic combinatorial optimization problem
 - You have a knapsack with a capacity W.
 - There are N items, each with value and weight
 - The Goal is to Maximize total value without exceeding the knapsack capacity. 
-\n<img src="knapsack.png" alt="Knapsack" width="300"/>\n
+\n<img src="knapsack.png" alt="Knapsack" width="600"/>\n
 
 In a portfolio context:\n
 - Capacity -> budget/limit\n
@@ -105,7 +105,7 @@ In a portfolio context:\n
 - Item(Weight) -> investment cost\n
 - Item(Value) -> expected return\n
 - Item(Risk) -> Volatility/Uncertainty
-\n<img src="portfolio.png" alt="Portfolio" width="300"/>\n
+\n<img src="portfolio.png" alt="Portfolio" width="600"/>\n
 
 ## Evolutionary Algorithms (EA)
 - Key Idea: Inspired by natural selection.
@@ -115,7 +115,7 @@ In a portfolio context:\n
   - Selection of the best solutions.
   - Recombination (Crossover) and Mutation to create new solutions.
   - Repeat until stopping criteria are met.
-\n<img src="darwin_2.png" alt="Darwin" width="300"/>\n
+\n<img src="darwin_2.png" alt="Darwin" width="600"/>\n
 
 ## Algorithms
 
@@ -127,13 +127,26 @@ Two algorithms were compared in this study:
 
 ## Data Description
 
-The experiments were conducted on a set of synthetically generated problem instances with varying sizes, where N represents the number of available assets. The problem sizes are N ∈ {{ {sorted(meta_df['N'].unique())} }}. To ensure statistical robustness, each experimental run was repeated across multiple random seeds.
-
-The performance of each algorithm was evaluated using several standard metrics for multi-objective optimization:
-- **Pareto Fronts:** The set of non-dominated solutions found by each algorithm.
-- **Hypervolume (HV):** Measures the volume of the objective space dominated by the obtained front. Higher is better.
-- **Inverted Generational Distance Plus (IGD+):** Measures the average distance from points in a true or reference Pareto front to the obtained front. Lower is better.
-- **Number of Non-Dominated Points (|ND|):** The number of solutions in the final Pareto front.
+We generate asset data using the np.random.normal function from the NumPy library. For each asset, three prop-
+erties were generated: investment cost (weight), return, and
+risk. The weights were drawn from a normal distribution
+with a mean of 10 and a standard deviation of 3 using
+np.random.normal (10, 3, 100,000). Returns were generated using np.random.normal(13, 3, 10000), and risks were
+generated similarly with a specified mean and standard
+deviation. Using np.random.normal provides several advantages:
+Realistic Data Distribution: The normal distribution models
+real-world financial data well, reflecting the variability and
+uncertainty of asset returns and risks.
+Controlled Variability: The mean and standard deviation
+allow for precise control over the data set’s characteristics.
+Scalability: NumPy supports efficient generation of large
+datasets with minimal computational cost.
+Reproducibility: By setting a random seed, the same
+data can be regenerated, ensuring the reproducibility of the
+results. In general, the use of np.random.normal for data
+generation in this study allows the creation of realistic,
+scalable, and reproducible datasets, providing a solid foundation for evaluating the performance of portfolio optimization
+algorithms.
 
 ## 1. Setup
 
@@ -146,10 +159,10 @@ This report summarizes the performance of multi-objective optimization methods.
 - **Time Caps (s):** {sorted(meta_df['time_cap_s'].dropna().unique().tolist())}
 
 **Objective Interpretation:**
-- **Value:** `-f1` (higher is better)
+- **Value(Expected return):** `-f1` (higher is better)
 - **Risk:** `f2` (lower is better)
 
-The goal is to find solutions that maximize Value while minimizing Risk, representing a classic Pareto trade-off.
+The goal is to find solutions that maximize the Expected return while minimizing Risk, representing a classic Pareto trade-off.
 
 ## 2. Performance Metrics
 
@@ -158,6 +171,7 @@ Metrics are aggregated across seeds (mean ± 95% CI).
 - **HV (Hypervolume) ↑:** Measures the volume of the dominated portion of the objective space. Higher is better.
 - **IGD+ (Inverted Generational Distance Plus) ↓:** Measures the average distance from each point in the reference front to the obtained front. Lower is better.
 - **|ND| (Number of Non-Dominated Points) ↑:** The number of points in the final Pareto front. Higher is generally better, indicating more choices.
+- **Pareto Fronts:** The set of non-dominated solutions found by each algorithm.
 
 ### HV (↑) mean ± 95% CI
 
